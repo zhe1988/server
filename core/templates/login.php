@@ -1,6 +1,7 @@
 <?php /** @var $l \OCP\IL10N */ ?>
 <?php
 script('core', 'merged-login');
+script('core', 'dist/login');
 
 use OC\Core\Controller\LoginController;
 ?>
