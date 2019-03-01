@@ -36,6 +36,8 @@ export default {
 	 */
 	notificationTimers: [],
 
+	updatableNotification: null,
+
 	/**
 	 * @param callback
 	 * @todo Write documentation
@@ -118,43 +120,9 @@ export default {
 	 * @return {jQuery} jQuery element for notification row
 	 */
 	showHtml: function (html, options) {
-		options = options || {};
-		_.defaults(options, {
-			timeout: 0
-		});
-
-		var self = this;
-		var $notification = $('#notification');
-		if (this.isHidden()) {
-			$notification.fadeIn().css('display', 'inline-block');
-		}
-		var $row = $('<div class="row"></div>');
-		if (options.type) {
-			$row.addClass('type-' + options.type);
-		}
-		if (options.type === 'error') {
-			// add a close button
-			var $closeButton = $('<a class="action close icon-close" href="#"></a>');
-			$closeButton.attr('alt', t('core', 'Dismiss'));
-			$row.append($closeButton);
-			$closeButton.one('click', function () {
-				self.hide($row);
-				return false;
-			});
-			$row.addClass('closeable');
-		}
-
-		$row.prepend(html);
-		$notification.append($row);
-
-		if (options.timeout > 0) {
-			// register timeout to vanish notification
-			this.notificationTimers.push(setTimeout(function () {
-				self.hide($row);
-			}, (options.timeout * 1000)));
-		}
-
-		return $row;
+		options = options || {}
+		options.showHtml = true
+		window.OCP.Toast.message(html, options);
 	},
 
 	/**
@@ -167,7 +135,7 @@ export default {
 	 * @return {jQuery} jQuery element for notification row
 	 */
 	show: function (text, options) {
-		return this.showHtml($('<div/>').text(text).html(), options);
+		window.OCP.Toast.message(text, options);
 	},
 
 	/**
@@ -177,21 +145,11 @@ export default {
 	 * @return {jQuery} JQuery element for notificaiton row
 	 */
 	showUpdate: function (text) {
-		var $notification = $('#notification');
-		// sanitise
-		var $html = $('<div/>').text(text).html();
-
-		// new notification
-		if (text && $notification.find('.row').length == 0) {
-			return this.showHtml($html);
+		var $permanent = $('.toast.permanent');
+		if ($permanent.length !== 0) {
+			$permanent.hide()
 		}
-
-		var $row = $('<div class="row"></div>').prepend($html);
-
-		// just update html in notification
-		$notification.html($row);
-
-		return $row;
+		this.updatableNotification = OCP.Toast.message(text, {type: 'permanent', timeout: 60})
 	},
 
 	/**
@@ -205,21 +163,9 @@ export default {
 	 * @param {string} [options.type] notification type
 	 */
 	showTemporary: function (text, options) {
-		var defaults = {
-			isHTML: false,
-			timeout: 7
-		};
-		options = options || {};
-		// merge defaults with passed in options
-		_.defaults(options, defaults);
-
-		var $row;
-		if (options.isHTML) {
-			$row = this.showHtml(text, options);
-		} else {
-			$row = this.show(text, options);
-		}
-		return $row;
+		options = options || {}
+		options.timeout = options.timeout || 7;
+		window.OCP.Toast.message(text, options);
 	},
 
 	/**
