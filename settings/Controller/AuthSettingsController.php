@@ -28,16 +28,16 @@
 namespace OC\Settings\Controller;
 
 use BadMethodCallException;
-use OC\AppFramework\Http;
 use OC\Authentication\Exceptions\InvalidTokenException;
 use OC\Authentication\Exceptions\PasswordlessTokenException;
 use OC\Authentication\Token\INamedToken;
 use OC\Authentication\Token\IProvider;
 use OC\Authentication\Token\IToken;
+use OC\Authentication\Token\IWipeableToken;
 use OC\Settings\Activity\Provider;
 use OCP\Activity\IManager;
-use OC\Authentication\Token\PublicKeyToken;
 use OCP\AppFramework\Controller;
+use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\JSONResponse;
 use OCP\ILogger;
 use OCP\IRequest;
@@ -248,6 +248,15 @@ class AuthSettingsController extends Controller {
 	}
 
 	public function wipe(int $id): JSONResponse {
-		return new JSONResponse();
+		$token = $this->tokenProvider->getTokenById($id);
+
+		if (!($token instanceof IWipeableToken)) {
+			return new JSONResponse([], Http::STATUS_BAD_REQUEST);
+		}
+
+		$token->wipe();
+		$this->tokenProvider->updateToken($token);
+
+		return new JSONResponse([]);
 	}
 }
