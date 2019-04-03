@@ -246,4 +246,8 @@ class AuthSettingsController extends Controller {
 		}
 		return $token;
 	}
+
+	public function wipe(int $id): JSONResponse {
+		return new JSONResponse();
+	}
 }

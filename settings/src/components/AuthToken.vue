@@ -149,6 +149,11 @@
 						action: () => this.$emit('delete', this.token),
 						text: t('settings', 'Revoke'),
 					});
+					actions.push({
+						icon: 'icon-delete',
+						action: () => this.$emit('wipe', this.token),
+						text: t('settings', 'Wipe device'),
+					});
 				}
 
 				return actions;
