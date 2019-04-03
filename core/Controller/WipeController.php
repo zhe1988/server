@@ -69,5 +69,7 @@ class WipeController extends Controller {
 		return new JSONResponse([
 			'wipe' => true
 		]);
+
+		//TODO: notification+activity that device retrieved the wipe
 	}
 }
