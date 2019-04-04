@@ -64,12 +64,27 @@ class WipeController extends Controller {
 			//TODO throttle
 		}
 
-		$this->tokenProvider->invalidateToken($token);
-
 		return new JSONResponse([
 			'wipe' => true
 		]);
 
 		//TODO: notification+activity that device retrieved the wipe
+	}
+
+	public function wipeDone(string $token): JSONResponse {
+		//TODO: notification that device has ben wiped
+
+		try {
+			$this->tokenProvider->getToken($token);
+			return new JSONResponse([], Http::STATUS_NOT_FOUND);
+		} catch (WipeTokenException $e) {
+		} catch (InvalidTokenException $e) {
+			return new JSONResponse([], Http::STATUS_NOT_FOUND);
+			//TODO throttle
+		}
+
+		$this->tokenProvider->invalidateToken($token);
+
+		return new JSONResponse([]);
 	}
 }
