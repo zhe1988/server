@@ -247,6 +247,14 @@ class AuthSettingsController extends Controller {
 		return $token;
 	}
 
+	/**
+	 * @NoAdminRequired
+	 *
+	 * @param int $id
+	 * @return JSONResponse
+	 * @throws InvalidTokenException
+	 * @throws \OC\Authentication\Exceptions\ExpiredTokenException
+	 */
 	public function wipe(int $id): JSONResponse {
 		$token = $this->tokenProvider->getTokenById($id);
 
