@@ -71,6 +71,17 @@ class WipeController extends Controller {
 		//TODO: notification+activity that device retrieved the wipe
 	}
 
+
+	/**
+	 * TODO: brute force protection
+	 *
+	 * @NoAdminRequired
+	 * @NoCSRFRequired
+	 * @PublicPage
+	 *
+	 * @param string $token
+	 * @return JSONResponse
+	 */
 	public function wipeDone(string $token): JSONResponse {
 		//TODO: notification that device has ben wiped
 
