@@ -57,6 +57,12 @@ class ProviderSet {
 	 * @return IProvider|null
 	 */
 	public function getProvider(string $providerId) {
+
+		foreach (array_keys($this->providers) as $k) {
+			\OC::$server->getLogger()->error($k);
+		}
+
+
 		return $this->providers[$providerId] ?? null;
 	}
 

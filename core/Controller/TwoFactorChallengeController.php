@@ -32,6 +32,7 @@ use OC_Util;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\RedirectResponse;
 use OCP\AppFramework\Http\StandaloneTemplateResponse;
+use OCP\Authentication\TwoFactorAuth\IActivatableAtLogin;
 use OCP\Authentication\TwoFactorAuth\IProvider;
 use OCP\Authentication\TwoFactorAuth\IProvidesCustomCSP;
 use OCP\Authentication\TwoFactorAuth\TwoFactorException;
@@ -107,6 +108,7 @@ class TwoFactorChallengeController extends Controller {
 		$providerSet = $this->twoFactorManager->getProviderSet($user);
 		$allProviders = $providerSet->getProviders();
 		list($providers, $backupProvider) = $this->splitProvidersAndBackupCodes($allProviders);
+		$setupProviders = $this->twoFactorManager->getLoginSetupProviders($user);
 
 		$data = [
 			'providers' => $providers,
@@ -114,6 +116,7 @@ class TwoFactorChallengeController extends Controller {
 			'providerMissing' => $providerSet->isProviderMissing(),
 			'redirect_url' => $redirect_url,
 			'logout_url' => $this->getLogoutUrl(),
+			'setupProviers' => $setupProviders,
 		];
 		return new StandaloneTemplateResponse($this->appName, 'twofactorselectchallenge', $data, 'guest');
 	}
@@ -129,8 +132,8 @@ class TwoFactorChallengeController extends Controller {
 	 */
 	public function showChallenge($challengeProviderId, $redirect_url) {
 		$user = $this->userSession->getUser();
-		$providerSet = $this->twoFactorManager->getProviderSet($user);
-		$provider = $providerSet->getProvider($challengeProviderId);
+
+
 		if (is_null($provider)) {
 			return new RedirectResponse($this->urlGenerator->linkToRoute('core.TwoFactorChallenge.selectChallenge'));
 		}
@@ -207,6 +210,54 @@ class TwoFactorChallengeController extends Controller {
 			'challengeProviderId' => $provider->getId(),
 			'redirect_url' => $redirect_url,
 		]));
+	}
+
+	/**
+	 * @NoAdminRequired
+	 * @NoCSRFRequired
+	 */
+	public function setupProviders() {
+		$user = $this->userSession->getUser();
+		$setupProviders = $this->twoFactorManager->getLoginSetupProviders($user);
+
+		$data = [
+			'providers' => $setupProviders,
+		];
+
+		$response = new StandaloneTemplateResponse($this->appName, 'twofactorsetupselection', $data, 'guest');
+		return $response;
+	}
+
+
+	/**
+	 * @NoAdminRequired
+	 * @NoCSRFRequired
+	 */
+	public function setupProvider(string $providerId) {
+		$user = $this->userSession->getUser();
+		$providers = $this->twoFactorManager->getLoginSetupProviders($user);
+
+		$provider = null;
+		foreach ($providers as $p) {
+			if ($p->getId() === $providerId) {
+				$provider = $p;
+			}
+		}
+
+
+		if ($provider === null || !($provider instanceof IActivatableAtLogin)) {
+			return new RedirectResponse($this->urlGenerator->linkToRoute('core.TwoFactorChallenge.selectChallenge'));
+		}
+
+		/** @var IActivatableAtLogin $provider */
+		$tmpl = $provider->getLoginSetup($user)->getBody();
+		$data = [
+			'provider' => $provider,
+			'logout_url' => $this->getLogoutUrl(),
+			'template' => $tmpl->fetchPage(),
+		];
+		$response = new StandaloneTemplateResponse($this->appName, 'twofactorsetupchallenge', $data, 'guest');
+		return $response;
 	}
 
 }
