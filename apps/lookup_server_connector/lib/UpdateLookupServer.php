@@ -78,7 +78,7 @@ class UpdateLookupServer {
 	/**
 	 * @param IUser $user
 	 */
-	public function userUpdated(IUser $user) {
+	public function userUpdated(IUser $user): void {
 
 		if (!$this->shouldUpdateLookupServer()) {
 			return;
@@ -102,7 +102,7 @@ class UpdateLookupServer {
 	 * @param IUser $user
 	 * @param array $publicData
 	 */
-	protected function sendToLookupServer(IUser $user, array $publicData) {
+	protected function sendToLookupServer(IUser $user, array $publicData): void {
 
 		$dataArray = ['federationId' => $user->getCloudId()];
 
@@ -139,7 +139,7 @@ class UpdateLookupServer {
 	 *
 	 * @return bool
 	 */
-	private function shouldUpdateLookupServer() {
+	private function shouldUpdateLookupServer(): bool {
 		return $this->lookupServerEnabled && !empty($this->lookupServer);
 	}
 
