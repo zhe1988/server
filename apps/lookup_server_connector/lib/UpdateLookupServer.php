@@ -38,8 +38,6 @@ use OCP\IUser;
 class UpdateLookupServer {
 	/** @var AccountManager */
 	private $accountManager;
-	/** @var IClientService */
-	private $clientService;
 	/** @var Signer */
 	private $signer;
 	/** @var IJobList */
@@ -57,12 +55,10 @@ class UpdateLookupServer {
 	 * @param IConfig $config
 	 */
 	public function __construct(AccountManager $accountManager,
-								IClientService $clientService,
 								Signer $signer,
 								IJobList $jobList,
 								IConfig $config) {
 		$this->accountManager = $accountManager;
-		$this->clientService = $clientService;
 		$this->signer = $signer;
 		$this->jobList = $jobList;
 
@@ -127,33 +123,12 @@ class UpdateLookupServer {
 		}
 
 		$dataArray = $this->signer->sign('lookupserver', $dataArray, $user);
-		$httpClient = $this->clientService->newClient();
-		try {
-			if (empty($publicData)) {
-				$httpClient->delete($this->lookupServer,
-					[
-						'body' => json_encode($dataArray),
-						'timeout' => 10,
-						'connect_timeout' => 3,
-					]
-				);
-			} else {
-				$httpClient->post($this->lookupServer,
-					[
-						'body' => json_encode($dataArray),
-						'timeout' => 10,
-						'connect_timeout' => 3,
-					]
-				);
-			}
-		} catch (\Exception $e) {
-			$this->jobList->add(RetryJob::class,
-				[
-					'dataArray' => $dataArray,
-					'retryNo' => 0,
-				]
-			);
-		}
+		$this->jobList->add(RetryJob::class,
+			[
+				'dataArray' => $dataArray,
+				'retryNo' => 0,
+			]
+		);
 	}
 
 	/**
