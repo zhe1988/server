@@ -49,7 +49,6 @@ class UpdateLookupServer {
 
 	/**
 	 * @param AccountManager $accountManager
-	 * @param IClientService $clientService
 	 * @param Signer $signer
 	 * @param IJobList $jobList
 	 * @param IConfig $config
