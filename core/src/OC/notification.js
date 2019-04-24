@@ -24,6 +24,7 @@ import $ from 'jquery'
 
 /**
  * @todo Write documentation
+ * @deprecated 17.0.0 use OCP.Toast
  * @namespace OC.Notification
  */
 export default {
@@ -40,7 +41,7 @@ export default {
 
 	/**
 	 * @param callback
-	 * @todo Write documentation
+	 * @deprecated 17.0.0 use OCP.Toast
 	 */
 	setDefault: function (callback) {
 		this.getDefaultNotificationFunction = callback;
@@ -54,6 +55,7 @@ export default {
 	 *
 	 * @param {jQuery} [$row] notification row
 	 * @param {Function} [callback] callback
+	 * @deprecated 17.0.0 use OCP.Toast
 	 */
 	hide: function ($row, callback) {
 		var self = this;
@@ -118,6 +120,7 @@ export default {
 	 * @param {string} [options.type] notification type
 	 * @param {int} [options.timeout=0] timeout value, defaults to 0 (permanent)
 	 * @return {jQuery} jQuery element for notification row
+	 * @deprecated 17.0.0 use OCP.Toast
 	 */
 	showHtml: function (html, options) {
 		options = options || {}
@@ -133,6 +136,7 @@ export default {
 	 * @param {string} [options.type] notification type
 	 * @param {int} [options.timeout=0] timeout value, defaults to 0 (permanent)
 	 * @return {jQuery} jQuery element for notification row
+	 * @deprecated 17.0.0 use OCP.Toast
 	 */
 	show: function (text, options) {
 		window.OCP.Toast.message(text, options);
@@ -143,6 +147,7 @@ export default {
 	 *
 	 * @param {string} text Message to display
 	 * @return {jQuery} JQuery element for notificaiton row
+	 * @deprecated 17.0.0 use OCP.Toast
 	 */
 	showUpdate: function (text) {
 		var $permanent = $('.toast.permanent');
@@ -161,6 +166,7 @@ export default {
 	 * @param {int} [options.timeout=7] timeout in seconds, if this is 0 it will show the message permanently
 	 * @param {boolean} [options.isHTML=false] an indicator for HTML notifications (true) or text (false)
 	 * @param {string} [options.type] notification type
+	 * @deprecated 17.0.0 use OCP.Toast
 	 */
 	showTemporary: function (text, options) {
 		options = options || {}
@@ -171,6 +177,7 @@ export default {
 	/**
 	 * Returns whether a notification is hidden.
 	 * @return {boolean}
+	 * @deprecated 17.0.0 use OCP.Toast
 	 */
 	isHidden: function () {
 		return !$("#notification").find('.row').length;
