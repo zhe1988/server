@@ -19,34 +19,38 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import Apps from './apps'
-import AppConfig from './appconfig'
-import Backbone from './backbone'
-import ContactsMenu from './contactsmenu'
-import EventSource from './eventsource'
-import {get, set} from './get_set'
-import L10N from './l10n'
-import msg from './msg'
-import Notification from './notification'
-import PasswordConfirmation from './password-confirmation'
-import Plugins from './plugins'
-import search from './search'
-import Util from './util'
+/**
+ * Get a variable by name
+ * @param {string} name
+ * @return {*}
+ */
+export const get = context => name => {
+	const namespaces = name.split('.')
+	const tail = namespaces.pop()
 
-/** @namespace OC */
-export default {
-	Apps,
-	AppConfig,
-	Backbone,
-	ContactsMenu,
-	EventSource,
-	L10N,
-	msg,
-	Notification,
-	PasswordConfirmation,
-	Plugins,
-	search,
-	Util,
-	get: get(window),
-	set: set(window),
+	for (var i = 0; i < namespaces.length; i++) {
+		context = context[namespaces[i]]
+		if (!context) {
+			return false
+		}
+	}
+	return context[tail]
+}
+
+/**
+ * Set a variable by name
+ * @param {string} name
+ * @param {*} value
+ */
+export const set = context => (name, value) => {
+	const namespaces = name.split(".")
+	const tail = namespaces.pop()
+
+	for (let i = 0; i < namespaces.length; i++) {
+		if (!context[namespaces[i]]) {
+			context[namespaces[i]] = {}
+		}
+		context = context[namespaces[i]]
+	}
+	context[tail] = value
 }
