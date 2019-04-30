@@ -151,7 +151,7 @@
 					});
 					actions.push({
 						icon: 'icon-delete',
-						action: () => this.$emit('wipe', this.token),
+						action: this.wipe,
 						text: t('settings', 'Wipe device'),
 					});
 				}
@@ -229,6 +229,11 @@
 				this.renaming = false;
 				this.$emit('rename', this.token, this.newName);
 			},
+			wipe () {
+				this.actionOpen = false;
+
+				this.$emit('wipe', this.token);
+			}
 		}
 	}
 </script>
