@@ -132,7 +132,8 @@ class TwoFactorChallengeController extends Controller {
 	 */
 	public function showChallenge($challengeProviderId, $redirect_url) {
 		$user = $this->userSession->getUser();
-
+		$providerSet = $this->twoFactorManager->getProviderSet($user);
+		$provider = $providerSet->getProvider($challengeProviderId);
 
 		if (is_null($provider)) {
 			return new RedirectResponse($this->urlGenerator->linkToRoute('core.TwoFactorChallenge.selectChallenge'));
@@ -228,7 +229,6 @@ class TwoFactorChallengeController extends Controller {
 		return $response;
 	}
 
-
 	/**
 	 * @NoAdminRequired
 	 * @NoCSRFRequired
@@ -258,6 +258,21 @@ class TwoFactorChallengeController extends Controller {
 		];
 		$response = new StandaloneTemplateResponse($this->appName, 'twofactorsetupchallenge', $data, 'guest');
 		return $response;
+	}
+
+	/**
+	 * @NoAdminRequired
+	 * @NoCSRFRequired
+	 *
+	 * @todo handle the extreme edge case of an invalid provider ID and redirect to the provider selection page
+	 */
+	public function confirmProviderSetup(string $providerId) {
+		return new RedirectResponse($this->urlGenerator->linkToRoute(
+			'core.TwoFactorChallenge.showChallenge',
+			[
+				'challengeProviderId' => $providerId,
+			]
+		));
 	}
 
 }

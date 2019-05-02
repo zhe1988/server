@@ -69,6 +69,7 @@ $application->registerRoutes($this, [
 		['name' => 'TwoFactorChallenge#solveChallenge', 'url' => '/login/challenge/{challengeProviderId}', 'verb' => 'POST'],
 		['name' => 'TwoFactorChallenge#setupProviders', 'url' => 'login/setupchallenge', 'verb' => 'GET'],
 		['name' => 'TwoFactorChallenge#setupProvider', 'url' => 'login/setupchallenge/{providerId}', 'verb' => 'GET'],
+		['name' => 'TwoFactorChallenge#confirmProviderSetup', 'url' => 'login/setupchallenge/{providerId}', 'verb' => 'POST'],
 		['name' => 'OCJS#getConfig', 'url' => '/core/js/oc.js', 'verb' => 'GET'],
 		['name' => 'Preview#getPreviewByFileId', 'url' => '/core/preview', 'verb' => 'GET'],
 		['name' => 'Preview#getPreview', 'url' => '/core/preview.png', 'verb' => 'GET'],
