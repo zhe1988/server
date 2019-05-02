@@ -30,6 +30,7 @@ import {isUserAdmin} from './admin'
 import L10N from './l10n'
 import {
 	generateUrl,
+	getRootPath,
 	filePath,
 	linkTo,
 	linkToOCS,
@@ -43,6 +44,7 @@ import Plugins from './plugins'
 import search from './search'
 import Util from './util'
 import {redirect, reload} from './navigation'
+import webroot from './webroot'
 
 /** @namespace OC */
 export default {
@@ -62,6 +64,7 @@ export default {
 	search,
 	Util,
 	generateUrl,
+	getRootPath,
 	filePath,
 	redirect,
 	reload,
@@ -69,4 +72,14 @@ export default {
 	linkToOCS,
 	linkToRemote,
 	linkToRemoteBase,
+	/**
+	 * Relative path to Nextcloud root.
+	 * For example: "/nextcloud"
+	 *
+	 * @type string
+	 *
+	 * @deprecated since 8.2, use OC.getRootPath() instead
+	 * @see OC#getRootPath
+	 */
+	webroot,
 }
