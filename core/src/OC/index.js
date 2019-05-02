@@ -22,15 +22,26 @@
 import Apps from './apps'
 import AppConfig from './appconfig'
 import Backbone from './backbone'
+import Config from './config'
 import ContactsMenu from './contactsmenu'
+import Dialogs from './dialogs'
 import EventSource from './eventsource'
 import L10N from './l10n'
+import {
+	generateUrl,
+	filePath,
+	linkTo,
+	linkToOCS,
+	linkToRemote,
+	linkToRemoteBase,
+} from './routing'
 import msg from './msg'
 import Notification from './notification'
 import PasswordConfirmation from './password-confirmation'
 import Plugins from './plugins'
 import search from './search'
 import Util from './util'
+import {redirect, reload} from './navigation'
 
 /** @namespace OC */
 export default {
@@ -38,6 +49,8 @@ export default {
 	AppConfig,
 	Backbone,
 	ContactsMenu,
+	config: Config,
+	dialogs: Dialogs,
 	EventSource,
 	L10N,
 	msg,
@@ -46,4 +59,12 @@ export default {
 	Plugins,
 	search,
 	Util,
+	generateUrl,
+	filePath,
+	redirect,
+	reload,
+	linkTo,
+	linkToOCS,
+	linkToRemote,
+	linkToRemoteBase,
 }

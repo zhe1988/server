@@ -6,8 +6,6 @@ var oc_webroot;
 var oc_current_user = document.getElementsByTagName('head')[0].getAttribute('data-user');
 var oc_requesttoken = document.getElementsByTagName('head')[0].getAttribute('data-requesttoken');
 
-window.oc_config = window.oc_config || {};
-
 if (typeof oc_webroot === "undefined") {
 	oc_webroot = location.pathname;
 	var pos = oc_webroot.indexOf('/index.php/');
@@ -61,7 +59,6 @@ Object.assign(window.OC, {
 	 * @deprecated use {@link OC.getCurrentUser} instead
 	 */
 	currentUser:(typeof oc_current_user!=='undefined')?oc_current_user:false,
-	config: window.oc_config,
 	appConfig: window.oc_appconfig || {},
 	theme: window.oc_defaults || {},
 	coreApps:['', 'admin','log','core/search','settings','core','3rdparty'],
@@ -69,156 +66,11 @@ Object.assign(window.OC, {
 	menuSpeed: 50,
 
 	/**
-	 * Get an absolute url to a file in an app
-	 * @param {string} app the id of the app the file belongs to
-	 * @param {string} file the file path relative to the app folder
-	 * @return {string} Absolute URL to a file
-	 */
-	linkTo:function(app,file){
-		return OC.filePath(app,'',file);
-	},
-
-	/**
-	 * Creates a relative url for remote use
-	 * @param {string} service id
-	 * @return {string} the url
-	 */
-	linkToRemoteBase:function(service) {
-		return OC.getRootPath() + '/remote.php/' + service;
-	},
-
-	/**
-	 * @brief Creates an absolute url for remote use
-	 * @param {string} service id
-	 * @return {string} the url
-	 */
-	linkToRemote:function(service) {
-		return window.location.protocol + '//' + window.location.host + OC.linkToRemoteBase(service);
-	},
-
-	/**
-	 * Gets the base path for the given OCS API service.
-	 * @param {string} service name
-	 * @param {int} version OCS API version
-	 * @return {string} OCS API base path
-	 */
-	linkToOCS: function(service, version) {
-		version = (version !== 2) ? 1 : 2;
-		return window.location.protocol + '//' + window.location.host + OC.getRootPath() + '/ocs/v' + version + '.php/' + service + '/';
-	},
-
-	/**
-	 * Generates the absolute url for the given relative url, which can contain parameters.
-	 * Parameters will be URL encoded automatically.
-	 * @param {string} url
-	 * @param [params] params
-	 * @param [options] options
-	 * @param {bool} [options.escape=true] enable/disable auto escape of placeholders (by default enabled)
-	 * @return {string} Absolute URL for the given relative URL
-	 */
-	generateUrl: function(url, params, options) {
-		var defaultOptions = {
-				escape: true
-			},
-			allOptions = options || {};
-		_.defaults(allOptions, defaultOptions);
-
-		var _build = function (text, vars) {
-			vars = vars || [];
-			return text.replace(/{([^{}]*)}/g,
-				function (a, b) {
-					var r = (vars[b]);
-					if(allOptions.escape) {
-						return (typeof r === 'string' || typeof r === 'number') ? encodeURIComponent(r) : encodeURIComponent(a);
-					} else {
-						return (typeof r === 'string' || typeof r === 'number') ? r : a;
-					}
-				}
-			);
-		};
-		if (url.charAt(0) !== '/') {
-			url = '/' + url;
-
-		}
-
-		if(oc_config.modRewriteWorking == true) {
-			return OC.getRootPath() + _build(url, params);
-		}
-
-		return OC.getRootPath() + '/index.php' + _build(url, params);
-	},
-
-	/**
-	 * Get the absolute url for a file in an app
-	 * @param {string} app the id of the app
-	 * @param {string} type the type of the file to link to (e.g. css,img,ajax.template)
-	 * @param {string} file the filename
-	 * @return {string} Absolute URL for a file in an app
-	 */
-	filePath:function(app,type,file){
-		var isCore=OC.coreApps.indexOf(app)!==-1,
-			link=OC.getRootPath();
-		if(file.substring(file.length-3) === 'php' && !isCore){
-			link+='/index.php/apps/' + app;
-			if (file != 'index.php') {
-				link+='/';
-				if(type){
-					link+=encodeURI(type + '/');
-				}
-				link+= file;
-			}
-		}else if(file.substring(file.length-3) !== 'php' && !isCore){
-			link=OC.appswebroots[app];
-			if(type){
-				link+= '/'+type+'/';
-			}
-			if(link.substring(link.length-1) !== '/'){
-				link+='/';
-			}
-			link+=file;
-		}else{
-			if ((app == 'settings' || app == 'core' || app == 'search') && type == 'ajax') {
-				link+='/index.php/';
-			}
-			else {
-				link+='/';
-			}
-			if(!isCore){
-				link+='apps/';
-			}
-			if (app !== '') {
-				app+='/';
-				link+=app;
-			}
-			if(type){
-				link+=type+'/';
-			}
-			link+=file;
-		}
-		return link;
-	},
-
-	/**
 	 * Check if a user file is allowed to be handled.
 	 * @param {string} file to check
 	 */
 	fileIsBlacklisted: function(file) {
-		return !!(file.match(oc_config.blacklist_files_regex));
-	},
-
-	/**
-	 * Redirect to the target URL, can also be used for downloads.
-	 * @param {string} targetURL URL to redirect to
-	 */
-	redirect: function(targetURL) {
-		window.location = targetURL;
-	},
-
-	/**
-	 * Reloads the current page
-	 */
-	reload: function() {
-		window.location.reload();
+		return !!(file.match(OC.config.blacklist_files_regex));
 	},
 
 	/**
@@ -492,12 +344,6 @@ Object.assign(window.OC, {
 		return path;
 	},
 
-	/**
-	 * Dialog helper for jquery dialogs.
-	 *
-	 * @namespace OC.dialogs
-	 */
-	dialogs:OCdialogs,
 	/**
 	 * Parses a URL query string into a JS map
 	 * @param {string} queryString query string in the format param1=1234&param2=abcde&param3=xyz
@@ -956,8 +802,8 @@ function initCore() {
 	function initSessionHeartBeat() {
 		// interval in seconds
 		var interval = NaN;
-		if (oc_config.session_lifetime) {
-			interval = Math.floor(oc_config.session_lifetime / 2);
+		if (OC.config.session_lifetime) {
+			interval = Math.floor(OC.config.session_lifetime / 2);
 		}
 		interval = isNaN(interval)? 900: interval;
 
@@ -978,8 +824,8 @@ function initCore() {
 	}
 
 	// session heartbeat (defaults to enabled)
-	if (typeof(oc_config.session_keepalive) === 'undefined' ||
-		!!oc_config.session_keepalive) {
+	if (typeof(OC.config.session_keepalive) === 'undefined' ||
+		!!OC.config.session_keepalive) {
 
 		initSessionHeartBeat();
 	}
