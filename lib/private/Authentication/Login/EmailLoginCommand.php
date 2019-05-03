@@ -47,9 +47,10 @@ class EmailLoginCommand extends ALoginCommand {
 						$username,
 						$loginData->getPassword()
 					);
-
-					$loginData->setUser($user);
-					$loginData->setUsername($username);
+					if ($user !== false) {
+						$loginData->setUser($user);
+						$loginData->setUsername($username);
+					}
 				}
 			}
 		}

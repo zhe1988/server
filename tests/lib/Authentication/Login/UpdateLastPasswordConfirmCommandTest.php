@@ -23,40 +23,42 @@
 
 declare(strict_types=1);
 
-namespace OC\Authentication\Login;
+namespace lib\Authentication\Login;
 
-use OCP\IConfig;
+use OC\Authentication\Login\UpdateLastPasswordConfirmCommand;
 use OCP\ISession;
+use PHPUnit\Framework\MockObject\MockObject;
 
-class SetUserTimezoneCommand extends ALoginCommand {
+class UpdateLastPasswordConfirmCommandTest extends ALoginCommandTest {
 
-	/** @var IConfig */
-	private $config;
-
-	/** @var ISession */
+	/** @var ISession|MockObject */
 	private $session;
 
-	public function __construct(IConfig $config,
-								ISession $session) {
-		$this->config = $config;
-		$this->session = $session;
+	protected function setUp() {
+		parent::setUp();
+
+		$this->session = $this->createMock(ISession::class);
+
+		$this->cmd = new UpdateLastPasswordConfirmCommand(
+			$this->session
+		);
 	}
 
-	public function process(LoginData $loginData): LoginResult {
-		if ($loginData->getTimeZoneOffset() !== '') {
-			$this->config->setUserValue(
-				$loginData->getUser()->getUID(),
-				'core',
-				'timezone',
-				$loginData->getTimeZone()
+	public function testProcess() {
+		$data = $this->getLoggedInLoginData();
+		$this->user->expects($this->once())
+			->method('getLastLogin')
+			->willReturn(1234);
+		$this->session->expects($this->once())
+			->method('set')
+			->with(
+				'last-password-confirm',
+				1234
 			);
-			$this->session->set(
-				'timezone',
-				$loginData->getTimeZoneOffset()
-			);
-		}
 
-		return $this->processNextOrFinishSuccessfully($loginData);
+		$result = $this->cmd->process($data);
+
+		$this->assertTrue($result->isSuccess());
 	}
 
 }

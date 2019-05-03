@@ -42,6 +42,11 @@ abstract class ALoginCommandTest extends TestCase {
 	/** @var string */
 	protected $password = '123456';
 
+	/** @var string */
+	protected $timezone = 'Europe/Vienna';
+
+	protected $timeZoneOffset = '2';
+
 	/** @var IUser|MockObject */
 	protected $user;
 
@@ -63,10 +68,41 @@ abstract class ALoginCommandTest extends TestCase {
 		);
 	}
 
+	protected function getInvalidLoginData(): LoginData {
+		return new LoginData(
+			$this->request,
+			$this->username,
+			$this->password
+		);
+	}
+
+	protected function getFailedLoginData(): LoginData {
+		$data = new LoginData(
+			$this->request,
+			$this->username,
+			$this->password
+		);
+		$data->setUser(false);
+		return $data;
+	}
+
 	protected function getLoggedInLoginData(): LoginData {
 		$basic = $this->getBasicLoginData();
 		$basic->setUser($this->user);
 		return $basic;
+	}
+
+	protected function getLoggedInLoginDataWithTimezone(): LoginData {
+		$data = new LoginData(
+			$this->request,
+			$this->username,
+			$this->password,
+			null,
+			$this->timezone,
+			$this->timeZoneOffset
+		);
+		$data->setUser($this->user);
+		return $data;
 	}
 
 }

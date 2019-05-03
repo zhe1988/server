@@ -23,18 +23,44 @@
 
 declare(strict_types=1);
 
-namespace OC\Authentication\Login;
+namespace lib\Authentication\Login;
 
-use function is_string;
+use OC\Authentication\Login\PreLoginHookCommand;
+use OC\User\Manager;
+use OCP\IUserManager;
+use PHPUnit\Framework\MockObject\MockObject;
 
-class UidCheckCommand extends ALoginCommand {
+class PreLoginHookCommandTest extends ALoginCommandTest {
 
-	public function process(LoginData $loginData): LoginResult {
-		if (!is_string($loginData->getUsername())) {
-			throw new \InvalidArgumentException('Username must be string');
-		}
+	/** @var IUserManager|MockObject */
+	private $userManager;
 
-		return $this->processNextOrFinishSuccessfully($loginData);
+	protected function setUp() {
+		parent::setUp();
+
+		$this->userManager = $this->createMock(Manager::class);
+
+		$this->cmd = new PreLoginHookCommand(
+			$this->userManager
+		);
+	}
+
+	public function testProcess() {
+		$data = $this->getBasicLoginData();
+		$this->userManager->expects($this->once())
+			->method('emit')
+			->with(
+				'\OC\User',
+				'preLogin',
+				[
+					$this->username,
+					$this->password,
+				]
+			);
+
+		$result = $this->cmd->process($data);
+
+		$this->assertTrue($result->isSuccess());
 	}
 
 }

@@ -264,7 +264,7 @@ class LoginController extends Controller {
 	 * @param string $timezone_offset
 	 * @return RedirectResponse
 	 */
-	public function tryLogin($user, $password, $redirect_url, $timezone = '', $timezone_offset = '') {
+	public function tryLogin(string $user, string $password, $redirect_url, string $timezone = '', string $timezone_offset = '') {
 		// If the user is already logged in and the CSRF check does not pass then
 		// simply redirect the user to the correct page as required. This is the
 		// case when an user has already logged-in, in another tab.

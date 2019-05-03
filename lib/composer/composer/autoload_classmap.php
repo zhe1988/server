@@ -519,7 +519,6 @@ return array(
     'OC\\Authentication\\Login\\PreLoginHookCommand' => $baseDir . '/lib/private/Authentication/Login/PreLoginHookCommand.php',
     'OC\\Authentication\\Login\\SetUserTimezoneCommand' => $baseDir . '/lib/private/Authentication/Login/SetUserTimezoneCommand.php',
     'OC\\Authentication\\Login\\TwoFactorCommand' => $baseDir . '/lib/private/Authentication/Login/TwoFactorCommand.php',
-    'OC\\Authentication\\Login\\UidCheckCommand' => $baseDir . '/lib/private/Authentication/Login/UidCheckCommand.php',
     'OC\\Authentication\\Login\\UidLoginCommand' => $baseDir . '/lib/private/Authentication/Login/UidLoginCommand.php',
     'OC\\Authentication\\Login\\UpdateLastPasswordConfirmCommand' => $baseDir . '/lib/private/Authentication/Login/UpdateLastPasswordConfirmCommand.php',
     'OC\\Authentication\\Login\\UserDisabledCheckCommand' => $baseDir . '/lib/private/Authentication/Login/UserDisabledCheckCommand.php',

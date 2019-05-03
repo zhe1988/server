@@ -27,9 +27,6 @@ namespace OC\Authentication\Login;
 
 class Chain {
 
-	/** @var UidCheckCommand */
-	private $uidCheckCommand;
-
 	/** @var PreLoginHookCommand */
 	private $preLoginHookCommand;
 
@@ -66,8 +63,7 @@ class Chain {
 	/** @var FinishRememberedLoginCommand */
 	private $finishRememberedLoginCommand;
 
-	public function __construct(UidCheckCommand $uidCheckCommand,
-								PreLoginHookCommand $preLoginHookCommand,
+	public function __construct(PreLoginHookCommand $preLoginHookCommand,
 								UserDisabledCheckCommand $userDisabledCheckCommand,
 								UidLoginCommand $uidLoginCommand,
 								EmailLoginCommand $emailLoginCommand,
@@ -80,7 +76,6 @@ class Chain {
 								TwoFactorCommand $twoFactorCommand,
 								FinishRememberedLoginCommand $finishRememberedLoginCommand
 	) {
-		$this->uidCheckCommand = $uidCheckCommand;
 		$this->preLoginHookCommand = $preLoginHookCommand;
 		$this->userDisabledCheckCommand = $userDisabledCheckCommand;
 		$this->uidLoginCommand = $uidLoginCommand;
@@ -96,9 +91,8 @@ class Chain {
 	}
 
 	public function process(LoginData $loginData): LoginResult {
-		$chain = $this->uidCheckCommand;
+		$chain = $this->preLoginHookCommand;
 		$chain
-			->setNext($this->preLoginHookCommand)
 			->setNext($this->userDisabledCheckCommand)
 			->setNext($this->uidLoginCommand)
 			->setNext($this->emailLoginCommand)

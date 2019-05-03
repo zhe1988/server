@@ -549,7 +549,6 @@ class ComposerStaticInit53792487c5a8370acc0b06b1a864ff4c
         'OC\\Authentication\\Login\\PreLoginHookCommand' => __DIR__ . '/../../..' . '/lib/private/Authentication/Login/PreLoginHookCommand.php',
         'OC\\Authentication\\Login\\SetUserTimezoneCommand' => __DIR__ . '/../../..' . '/lib/private/Authentication/Login/SetUserTimezoneCommand.php',
         'OC\\Authentication\\Login\\TwoFactorCommand' => __DIR__ . '/../../..' . '/lib/private/Authentication/Login/TwoFactorCommand.php',
-        'OC\\Authentication\\Login\\UidCheckCommand' => __DIR__ . '/../../..' . '/lib/private/Authentication/Login/UidCheckCommand.php',
         'OC\\Authentication\\Login\\UidLoginCommand' => __DIR__ . '/../../..' . '/lib/private/Authentication/Login/UidLoginCommand.php',
         'OC\\Authentication\\Login\\UpdateLastPasswordConfirmCommand' => __DIR__ . '/../../..' . '/lib/private/Authentication/Login/UpdateLastPasswordConfirmCommand.php',
         'OC\\Authentication\\Login\\UserDisabledCheckCommand' => __DIR__ . '/../../..' . '/lib/private/Authentication/Login/UserDisabledCheckCommand.php',
