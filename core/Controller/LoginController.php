@@ -235,12 +235,8 @@ class LoginController extends Controller {
 		return $parameters;
 	}
 
-	/**
-	 * @param string $redirectUrl
-	 * @return RedirectResponse
-	 */
-	private function generateRedirect($redirectUrl) {
-		if (!is_null($redirectUrl) && $this->userSession->isLoggedIn()) {
+	private function generateRedirect(?string $redirectUrl): RedirectResponse {
+		if ($redirectUrl !== null && $this->userSession->isLoggedIn()) {
 			$location = $this->urlGenerator->getAbsoluteURL(urldecode($redirectUrl));
 			// Deny the redirect if the URL contains a @
 			// This prevents unvalidated redirects like ?redirect_url=:user@domain.com
@@ -264,7 +260,11 @@ class LoginController extends Controller {
 	 * @param string $timezone_offset
 	 * @return RedirectResponse
 	 */
-	public function tryLogin(string $user, string $password, $redirect_url, string $timezone = '', string $timezone_offset = '') {
+	public function tryLogin(string $user,
+							 string $password,
+							 string $redirect_url = null,
+							 string $timezone = '',
+							 string $timezone_offset = ''): RedirectResponse {
 		// If the user is already logged in and the CSRF check does not pass then
 		// simply redirect the user to the correct page as required. This is the
 		// case when an user has already logged-in, in another tab.
@@ -272,28 +272,28 @@ class LoginController extends Controller {
 			return $this->generateRedirect($redirect_url);
 		}
 
-		$result = $this->loginChain->process(new LoginData(
+		$data = new LoginData(
 			$this->request,
 			$user,
 			$password,
 			$redirect_url,
 			$timezone,
 			$timezone_offset
-		));
+		);
+		$result = $this->loginChain->process($data);
 		if (!$result->isSuccess()) {
-			if ($result->getRedirectUrl() !== null) {
-				return new RedirectResponse($result->getRedirectUrl());
-			}
-
-			return $this->generateRedirect($redirect_url);
+			return $this->createLoginFailedResponse(
+				$data->getUsername(),
+				$user,
+				$redirect_url,
+				$result->getErrorMessage()
+			);
 		}
 
-		return $this->createLoginFailedResponse(
-			$loginData->getUsername(),
-			$user,
-			$redirect_url,
-			$result->getErrorMessage()
-		);
+		if ($result->getRedirectUrl() !== null) {
+			return new RedirectResponse($result->getRedirectUrl());
+		}
+		return $this->generateRedirect($redirect_url);
 	}
 
 	/**
@@ -309,8 +309,8 @@ class LoginController extends Controller {
 		$user, $originalUser, $redirect_url, string $loginMessage) {
 		// Read current user and append if possible we need to
 		// return the unmodified user otherwise we will leak the login name
-		$args = !is_null($user) ? ['user' => $originalUser] : [];
-		if (!is_null($redirect_url)) {
+		$args = $user !== null ? ['user' => $originalUser] : [];
+		if ($redirect_url !== null) {
 			$args['redirect_url'] = $redirect_url;
 		}
 		$response = new RedirectResponse(
